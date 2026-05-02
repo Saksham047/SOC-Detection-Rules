@@ -1,1 +1,15 @@
+let timeframe = 2m;
+let threshold = 5;
 
+let failed = SecurityEvent
+| where EventID == 4625
+| summarize FailedAttempts = count() by Account, IPAddress, bin(TimeGenerated, timeframe)
+| where FailedAttempts >= threshold;
+
+let success = SecurityEvent
+| where EventID == 4624
+| project Account, IPAddress, TimeGenerated;
+
+failed
+| join kind=inner success on Account, IPAddress
+| where success_TimeGenerated > TimeGenerated
