@@ -6,7 +6,8 @@ If these attempts are followed by a successful login, it strongly suggests that 
 
 ---
 
-## How this detection triggers
+## Sample Logs
+See logs.txt for simulated attack scenario
 
 ### Microsoft Sentinel (KQL)
 ```kql
@@ -25,3 +26,5 @@ let success = SecurityEvent
 failed
 | join kind=inner success on Account, IPAddress
 | where success_TimeGenerated > TimeGenerated
+## Sample Logs
+See logs.txt for simulated attack scenario
