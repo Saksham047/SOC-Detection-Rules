@@ -26,26 +26,51 @@ Detect brute force attempts using multiple failed logins (Event ID 4625), and id
 Threshold-Based Correlation Rule
 
 ---
+## 🌳 Rule Conditions (ArcSight Tree Format)
 
-### 📌 Event Selection (Filter Conditions)
--deviceEventClassId = "4625"
+AND
+├── Category Behavior = /Authentication/Verify
+├── Category Outcome = /Success
+├── Category Technique != /Brute Force/Login
+├── Attacker Address IS NOT NULL
+├── Target Address IS NOT NULL
+├── loginAccount != "Unknown user"
+├── Type IN (Base, Aggregated)
+└── InActiveList("/All Lists/Suspicious_Auth_Activity")
 
 ---
 
-### 📌 Grouping (Aggregation)
-Group By:
-Source Address (src)
+## 🔗 Active List Logic (Supporting Condition)
 
+Suspicious_Auth_Activity is populated when:
+
+AND
+├── deviceEventClassId = "4625"
+├── Attacker Address IS NOT NULL
+└── Aggregation:
+    ├── COUNT >= 5
+    ├── GROUP BY Attacker Address
+    └── WITHIN 2 minutes
 
 ---
 
-### 📌 Threshold Condition
-Trigger when:
-COUNT(deviceEventClassId = 4625) > 5
-WITHIN 5 minutes
-BY same Source Address
+## 📊 Aggregation (Main Rule)
 
+├── # of matches: 1  
+└── Time Frame: 2 minutes  
 
+---
+
+## 🧠 Correlation Logic
+
+IF
+├── Source IP present in Active List
+└── Successful login event occurs
+
+THEN
+└── Trigger High Severity Alert
+
+---
 ---
 ## 🚨 Alert Details
 
