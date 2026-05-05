@@ -1,0 +1,32 @@
+DeviceProcessEvents
+
+| where FileName in~ (
+    "mshta.exe",
+    "regsvr32.exe",
+    "wmic.exe",
+    "bitsadmin.exe",
+    "msbuild.exe",
+    "installutil.exe"
+)
+
+| where ProcessCommandLine has_any (
+    "http://","https://",
+    "javascript","vbscript",
+    "DownloadFile","/transfer",
+    ".xml",".csproj",".dll"
+)
+
+| where InitiatingProcessFileName in~ (
+    "winword.exe","excel.exe","outlook.exe",
+    "wscript.exe","cscript.exe"
+)
+
+| project Timestamp,
+          DeviceName,
+          AccountName,
+          FileName,
+          ProcessCommandLine,
+          InitiatingProcessFileName,
+          InitiatingProcessCommandLine
+
+| order by Timestamp desc
