@@ -1,113 +1,86 @@
 # ArcSight Correlation Rule - Suspicious Process Execution
 
-## 🧠 Rule Name
+##  Rule Name
 Suspicious Execution of LOLBins with Malicious Behavior
 
 ---
 
-## 🎯 Purpose
+##  Purpose
 Detect execution of commonly abused Windows binaries (LOLBins) with suspicious command-line arguments and user-driven parent processes, often indicative of phishing or initial access attacks.
 
 ---
 
-## 📥 Data Source
+##  Data Source
 - Endpoint Process Events (Windows Logs / Sysmon / EDR Feed)
 
 ---
 
-## ⚙️ Rule Logic (ArcSight ESM)
+# ArcSight Correlation Rule: Suspicious Process Chain Detection
 
-### 1. Base Filter (Target Processes)
+## Rule Name
+Suspicious Process Chain Detection
 
-IF Destination Process Name IN:
+## Objective
+Detect potentially malicious parent-child process relationships that are commonly associated with malware execution, persistence, and command execution.
 
+## Use Case
+Attackers often abuse trusted Windows processes such as:
+- cmd.exe
+- powershell.exe
+- wscript.exe
+- cscript.exe
 - mshta.exe
+- rundll32.exe
 - regsvr32.exe
-- wmic.exe
-- bitsadmin.exe
-- msbuild.exe
-- installutil.exe
 
----
+When these processes are launched by unusual parent processes (for example, Microsoft Word or Excel), it may indicate malicious activity.
 
-### 2. Command-Line Condition
+## Detection Logic
 
-AND Command Line CONTAINS ANY OF:
+Trigger an alert when:
 
-- http://
-- https://
-- javascript
-- vbscript
-- .dll
-- .xml
-
----
-
-### 3. Parent Process Condition
-
-AND Initiating Process Name IN:
-
+### Parent Process
 - winword.exe
 - excel.exe
 - outlook.exe
+- powerpnt.exe
+- chrome.exe
+- firefox.exe
+- teams.exe
+
+### Child Process
+- cmd.exe
+- powershell.exe
+- pwsh.exe
 - wscript.exe
 - cscript.exe
+- mshta.exe
+- rundll32.exe
+- regsvr32.exe
 
----
+##  Correlation Condition
 
-## 🚨 Correlation Rule Logic
-
-Trigger Alert WHEN:
-
-(Condition 1 AND Condition 2 AND Condition 3)
-
----
-
-## 📊 Severity
-
-| Condition Match | Severity |
-|------|------|
-| All 3 conditions | High |
-| 2 conditions | Medium |
-| 1 condition | Low / Ignore |
-
----
-
-## 🧠 Use Case
-
-- Phishing-based execution detection  
-- Macro-based attack chains  
-- Living-off-the-land binary abuse  
-- Initial access detection
-
----
-
-## ⚠️ False Positives
-
-Possible benign activity:
-- IT automation scripts
-- Software deployment tools
-- Admin maintenance tasks
-
----
-
-## 🛡️ Mitigation Strategy
-
-- Whitelist known admin/service accounts  
-- Exclude trusted deployment servers  
-- Validate parent process legitimacy  
-
----
-
-## 🔥 Response Actions
-
-- Investigate parent process origin  
-- Check user email/download history  
-- Analyze network connections  
-- Isolate endpoint if confirmed malicious  
-
----
-
+```text
+deviceEventClassId = "Process Creation"
+AND parentProcessName IN (
+  "winword.exe",
+  "excel.exe",
+  "outlook.exe",
+  "powerpnt.exe",
+  "chrome.exe",
+  "firefox.exe",
+  "teams.exe"
+)
+AND processName IN (
+  "cmd.exe",
+  "powershell.exe",
+  "pwsh.exe",
+  "wscript.exe",
+  "cscript.exe",
+  "mshta.exe",
+  "rundll32.exe",
+  "regsvr32.exe"
+)
 ## 📌 Notes
 
 ArcSight correlation rules rely heavily on event matching conditions rather than query-based filtering like KQL. This rule is designed to replicate the same detection logic in enterprise SIEM format.
